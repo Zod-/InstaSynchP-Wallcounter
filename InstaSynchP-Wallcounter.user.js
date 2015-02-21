@@ -49,15 +49,18 @@ Wallcounter.prototype.executeOnce = function () {
   function count(video, duration, inc) {
     var name = video.addedby.toLowerCase();
     if (th.counter.hasOwnProperty(name)) {
+      //update wallcounter
       th.counter[name].duration += duration;
       th.counter[name].count += inc;
     } else {
+      //create wallcounter
       th.counter[name] = {
         duration: duration,
         count: 1,
         origName: video.addedby
       };
     }
+    //update own wallcounter
     if (name === thisUser().username.toLowerCase()) {
       $('#playlist_wallcounter').text(
         'Wallcounter[{1} - {0}]'.format(th.counter[name].count,
@@ -68,15 +71,16 @@ Wallcounter.prototype.executeOnce = function () {
 
   events.on(th, "AddVideo", function (video) {
     count(video, video.duration, +1);
-  });
+  }, true);
 
   events.on(th, "RemoveVideo", function (ignore, video) {
     count(video, -video.duration, -1);
-  });
+  }, true);
 };
 
 Wallcounter.prototype.preConnect = function () {
   "use strict";
+  //add own wallcounter below the playlist
   $('.playlist-stats').append(
     $('<div>', {
       id: 'playlist_wallcounter'
@@ -84,6 +88,7 @@ Wallcounter.prototype.preConnect = function () {
   );
 };
 
+//let other plugins overwrite this
 Wallcounter.prototype.formatOutput = function (counts) {
   "use strict";
   var output = "Wallcounter<br>";
@@ -93,11 +98,17 @@ Wallcounter.prototype.formatOutput = function (counts) {
       count.count,
       utils.secondsToTime(count.duration)
     );
-    if ((index+1) % 2 === 0) {
+    //2 counters per line
+    if ((index + 1) % 2 === 0) {
+      //remove " - "
       output = output.substring(0, output.length - 3);
       output += '<br>';
     }
   });
+  //remove " - "
+  if (counts.length % 2 === 1) {
+    output = output.substring(0, output.length - 3);
+  }
   return output;
 };
 
@@ -119,14 +130,17 @@ Wallcounter.prototype.execute = function (opts) {
     return c2.duration - c1.duration;
   }
 
+  //collect users and their durations
   if (opts.usernames.length !== 0) {
     opts.usernames.forEach(addToList);
   } else {
     Object.keys(th.counter).forEach(addToList);
   }
 
+  //sort by duration
   list.sort(compareCount);
 
+  //display
   addSystemMessage(th.formatOutput(list));
 };
 
