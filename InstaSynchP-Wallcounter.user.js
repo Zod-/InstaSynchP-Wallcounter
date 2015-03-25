@@ -29,6 +29,11 @@ function Wallcounter(version) {
       'callback': this.execute
     }
   };
+  this.styles = [{
+    'name': 'wallcounter',
+    'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Wallcounter/f234bce65b1fe913f13672cb8507dfa3dcf767d1/wallcounter.css',
+    'autoload': true
+  }];
 }
 
 Wallcounter.prototype.resetVariables = function () {
@@ -39,12 +44,6 @@ Wallcounter.prototype.resetVariables = function () {
 Wallcounter.prototype.executeOnce = function () {
   "use strict";
   var th = this;
-
-  cssLoader.add({
-    'name': 'wallcounter',
-    'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Wallcounter/f234bce65b1fe913f13672cb8507dfa3dcf767d1/wallcounter.css',
-    'autoload': true
-  });
 
   function count(video, duration, inc) {
     var name = video.addedby.toLowerCase();
