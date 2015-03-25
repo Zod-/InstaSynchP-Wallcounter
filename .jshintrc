@@ -5,7 +5,12 @@
     "window": true,
     "addSystemMessage": true,
     "thisUser": true,
-    "events": true
+    "events": true,
+    "QUnit": true,
+    "Wall": true,
+    "Wallcounter": true,
+    "defaultWallObject": true,
+    "filledWallObject": true
   },
   "newcap":    false,
   "boss":      true,

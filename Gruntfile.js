@@ -17,7 +17,7 @@ module.exports = function (grunt) {
             replacement: '<%= pkg.version %>'
           }, {
             pattern: /{{ WALLCOUNTERCSSREV }}/g,
-            replacement: function(){
+            replacement: function () {
               var cssrev = grunt.file.read('dist/wallcounterCSSrev').trim();
               grunt.file.delete('dist/wallcounterCSSrev');
               return cssrev;
@@ -40,6 +40,8 @@ module.exports = function (grunt) {
       },
       beforereplace: ['src/InstaSynchP-Wallcounter.user.js'],
       afterreplace: ['dist/InstaSynchP-Wallcounter.user.js'],
+      beforeconcat: ['tests/src/*.js'],
+      afterconcat: ['tests/test.js'],
       other: ['Gruntfile.js']
     },
     shell: {
@@ -52,17 +54,28 @@ module.exports = function (grunt) {
           }
         }
       }
+    },
+    concat: {
+      test: {
+        src: ['tests/src/*.js'],
+        dest: 'tests/test.js',
+      }
+    },
+    qunit: {
+      all: ['tests/index.html']
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-string-replace');
   grunt.loadNpmTasks('grunt-shell');
 
-  grunt.registerTask('default', ['copy', 'shell', 'string-replace', 'jshint']);
-  grunt.registerTask('test', ['jshint']);
+  grunt.registerTask('default', ['copy', 'shell', 'string-replace', 'concat', 'jshint', 'qunit']);
+  grunt.registerTask('test', ['concat', 'jshint', 'qunit']);
   grunt.registerTask('build-css', ['copy']);
-  grunt.registerTask('build-js', ['shell', 'string-replace']);
-  grunt.registerTask('build', ['copy', 'shell', 'string-replace']);
+  grunt.registerTask('build-js', ['shell', 'concat', 'string-replace']);
+  grunt.registerTask('build', ['copy', 'shell', 'concat', 'string-replace']);
 };
