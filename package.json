@@ -1,6 +1,6 @@
 {
   "name": "InstaSynchP-Wallcounter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Summarizes the lengths of each users (or a list of users) walls",
   "main": "Gruntfile.js",
   "repository": {

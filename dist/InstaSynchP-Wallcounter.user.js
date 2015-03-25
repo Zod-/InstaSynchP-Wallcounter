@@ -3,7 +3,7 @@
 // @namespace   InstaSynchP
 // @description Summarizes the lengths of each users video walls
 
-// @version     1.0.1
+// @version     1.0.2
 // @author      Zod-
 // @source      https://github.com/Zod-/InstaSynchP-Wallcounter
 // @license     MIT
@@ -47,7 +47,7 @@ Wall.prototype.format = function (format) {
 
 function Wallcounter() {
   "use strict";
-  this.version = '1.0.1';
+  this.version = '1.0.2';
   this.name = 'InstaSynchP Wallcounter';
   this.counter = {};
   this.ownCounter = undefined;
@@ -122,9 +122,7 @@ Wallcounter.prototype.bindUpdates = function () {
     th.createIfNotExists(user.username);
   }
 
-  //LoadPlaylist happens before LoadUserlist so the walls would not have been
-  //created yet when recieving the AddVideo events
-  events.on(th, 'LoadPlaylist', function (videos) {
+  function onLoadPlaylist(videos) {
     videos.forEach(function (video) {
       onAddUser({
         username: video.addedby
@@ -132,7 +130,14 @@ Wallcounter.prototype.bindUpdates = function () {
       onAddVideo(video);
     });
     events.on(th, "AddVideo", onAddVideo, true);
-  });
+  }
+
+  //LoadPlaylist happens before LoadUserlist so the walls would not have been
+  //created yet when recieving the AddVideo events
+  events.on(th, 'LoadPlaylist', function () {
+    events.unbind("AddVideo", onAddVideo);
+  }, true);
+  events.on(th, 'LoadPlaylist', onLoadPlaylist);
 
   events.on(th, "AddUser", onAddUser);
 
@@ -142,14 +147,59 @@ Wallcounter.prototype.bindUpdates = function () {
   }, true);
 };
 
+Wallcounter.prototype.initOwnCounter = function () {
+  "use strict";
+  var th = this;
+  th.ownCounter = new Wall(thisUser().username);
+  th.counter[th.key(th.ownCounter.username)] = th.ownCounter;
+};
+
+Wallcounter.prototype.isAddVideoMessage = function (user, message) {
+  "use strict";
+  return (user.username === '' && message === 'Video added successfully.');
+};
+
+Wallcounter.prototype.getAddVideoMessage = function () {
+  "use strict";
+  var th = this;
+  return 'Video added successfully {0}'.format(th.ownCounter.format('[{1} - {2}]'));
+};
+
+Wallcounter.prototype.writeAddVideoMessage = function () {
+  "use strict";
+  addSystemMessage(this.getAddVideoMessage());
+};
+
+Wallcounter.prototype.hideLastMessage = function () {
+  "use strict";
+  $('#chat_messages >:last-child').hide();
+};
+
+Wallcounter.prototype.onAddVideoMessage = function () {
+  "use strict";
+  var th = this;
+  th.hideLastMessage();
+  th.writeAddVideoMessage();
+};
+
+Wallcounter.prototype.bindAddMessage = function () {
+  "use strict";
+  var th = this;
+  events.on(th, 'AddMessage', function (user, message) {
+    if (th.isAddVideoMessage(user, message)) {
+      th.onAddVideoMessage();
+    }
+  });
+};
+
 Wallcounter.prototype.executeOnce = function () {
   "use strict";
   var th = this;
   th.bindUpdates();
-  events.on(th, 'Joined', function () {
-    th.ownCounter = new Wall(thisUser().username);
-    th.counter[th.key(th.ownCounter.username)] = th.ownCounter;
-  });
+
+  events.on(th, 'Joined', th.initOwnCounter);
+
+  th.bindAddMessage();
 };
 
 Wallcounter.prototype.preConnect = function () {

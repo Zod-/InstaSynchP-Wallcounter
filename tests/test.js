@@ -158,7 +158,9 @@ QUnit.test("Increase", function (assert) {
   wallcounter.counter = {
     'abcde': defaultWallObject()
   };
-  wallcounter.increase('abcde', {duration: 10});
+  wallcounter.increase('abcde', {
+    duration: 10
+  });
   assert.strictEqual(wallcounter.counter.abcde.duration, 10, 'Duration incrased');
   assert.strictEqual(wallcounter.counter.abcde.videoCount, 1, 'VideoCount incrased');
 });
@@ -169,7 +171,9 @@ QUnit.test("Increase key test", function (assert) {
   wallcounter.counter = {
     'abcde': defaultWallObject()
   };
-  wallcounter.increase('ABCDE', {duration: 10});
+  wallcounter.increase('ABCDE', {
+    duration: 10
+  });
   assert.strictEqual(wallcounter.counter.abcde.duration, 10, 'Duration incrased');
   assert.strictEqual(wallcounter.counter.abcde.videoCount, 1, 'VideoCount incrased');
 });
@@ -180,7 +184,9 @@ QUnit.test("Decrease", function (assert) {
   wallcounter.counter = {
     'abcde': filledWallObject(1)
   };
-  wallcounter.decrease('abcde', {duration: 10});
+  wallcounter.decrease('abcde', {
+    duration: 10
+  });
   assert.strictEqual(wallcounter.counter.abcde.duration, 0, 'Duration decreased');
   assert.strictEqual(wallcounter.counter.abcde.videoCount, 0, 'VideoCount decreased');
 });
@@ -191,7 +197,9 @@ QUnit.test("Decrease key test", function (assert) {
   wallcounter.counter = {
     'abcde': filledWallObject(1)
   };
-  wallcounter.decrease('ABCDE', {duration: 10});
+  wallcounter.decrease('ABCDE', {
+    duration: 10
+  });
   assert.strictEqual(wallcounter.counter.abcde.duration, 0, 'Duration decreased');
   assert.strictEqual(wallcounter.counter.abcde.videoCount, 0, 'VideoCount decreased');
 });
@@ -229,7 +237,7 @@ QUnit.test("CreateIfNotExists key test", function (assert) {
 QUnit.test("Create display", function (assert) {
   "use strict";
   window.plugins.wallcounter.preConnect();
-  assert.strictEqual($('.playlist-stats')[0].innerHTML,'<div id="playlist_wallcounter">Wallcounter[00:00 - 0]</div>', 'Display created');
+  assert.strictEqual($('.playlist-stats')[0].innerHTML, '<div id="playlist_wallcounter">Wallcounter[00:00 - 0]</div>', 'Display created');
 });
 
 QUnit.test("Update display", function (assert) {
@@ -263,4 +271,68 @@ QUnit.test("GetWallsForUsernames key test", function (assert) {
   };
   var walls = wallcounter.getWallsForUsernames(['FOO']);
   assert.strictEqual(walls[0].username, 'foo', "lowercase key");
+});
+
+QUnit.test("Init own counter", function (assert) {
+  "use strict";
+  var wallcounter = new Wallcounter();
+  window.thisUser = function () {
+    return {
+      username: 'abcde'
+    };
+  };
+  wallcounter.initOwnCounter();
+  assert.strictEqual(wallcounter.ownCounter, wallcounter.counter.abcde, 'OwnCounter is in the counter object');
+});
+
+QUnit.test("Init own counter key test", function (assert) {
+  "use strict";
+  var wallcounter = new Wallcounter();
+  window.thisUser = function () {
+    return {
+      username: 'ABCDE'
+    };
+  };
+  wallcounter.initOwnCounter();
+  assert.strictEqual(wallcounter.ownCounter, wallcounter.counter.abcde, 'To lower case key');
+});
+
+QUnit.test("IsAddVideoMessage", function (assert) {
+  "use strict";
+  assert.strictEqual(window.plugins.wallcounter.isAddVideoMessage({
+    username: 'abcde'
+  }, 'Video added successfully.'), false, 'is normal message');
+  assert.strictEqual(window.plugins.wallcounter.isAddVideoMessage({
+    username: ''
+  }, 'Video added successfully.'), true, 'is add video message');
+});
+
+QUnit.test("GetAddVideoMessage", function (assert) {
+  "use strict";
+  var wallcounter = new Wallcounter();
+  wallcounter.ownCounter = filledWallObject(1);
+
+  assert.strictEqual(wallcounter.getAddVideoMessage(), 'Video added successfully [00:10 - 1]', 'get message');
+});
+
+QUnit.test("WriteAddVideoMessage", function (assert) {
+  "use strict";
+  var wallcounter = new Wallcounter(),
+    message = '';
+  window.addSystemMessage = function (m) {
+    message = m;
+  };
+
+  wallcounter.ownCounter = filledWallObject(1);
+  wallcounter.writeAddVideoMessage({
+    username: ''
+  }, 'Video added successfully.');
+
+  assert.strictEqual(message, wallcounter.getAddVideoMessage(), 'Write message');
+});
+
+QUnit.test("HideLastMessage", function (assert) {
+  "use strict";
+  window.plugins.wallcounter.hideLastMessage();
+  assert.strictEqual($('#second_message').attr('style'), 'display: none; ', 'Hide last message');
 });
