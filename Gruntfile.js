@@ -1,11 +1,10 @@
 module.exports = function (grunt) {
   "use strict";
-  var wallcounterCSSrev = '';
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     'string-replace': {
-      version: {
+      replace: {
         files: [{
           flatten: true,
           expand: true,
@@ -18,7 +17,11 @@ module.exports = function (grunt) {
             replacement: '<%= pkg.version %>'
           }, {
             pattern: /{{ WALLCOUNTERCSSREV }}/g,
-            replacement: wallcounterCSSrev
+            replacement: function(){
+              var cssrev = grunt.file.read('dist/wallcounterCSSrev').trim();
+              grunt.file.delete('dist/wallcounterCSSrev');
+              return cssrev;
+            }
           }]
         }
       }
@@ -44,7 +47,7 @@ module.exports = function (grunt) {
         command: 'git log -n 1 --pretty="%H" dist/wallcounter.css',
         options: {
           callback: function log(err, stdout, stderr, cb) {
-            wallcounterCSSrev = stdout;
+            grunt.file.write('dist/wallcounterCSSrev', stdout);
             cb();
           }
         }

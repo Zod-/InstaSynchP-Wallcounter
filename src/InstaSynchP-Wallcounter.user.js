@@ -31,7 +31,7 @@ function Wallcounter() {
   };
   this.styles = [{
     'name': 'wallcounter',
-    'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Wallcounter/f234bce65b1fe913f13672cb8507dfa3dcf767d1/wallcounter.css',
+    'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Wallcounter/{{ WALLCOUNTERCSSREV }}/dist/wallcounter.css',
     'autoload': true
   }];
 }
