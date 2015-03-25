@@ -147,14 +147,18 @@ Wallcounter.prototype.bindUpdates = function () {
   }, true);
 };
 
+Wallcounter.prototype.initOwnCounter = function () {
+  "use strict";
+  var th = this;
+  th.ownCounter = new Wall(thisUser().username);
+  th.counter[th.key(th.ownCounter.username)] = th.ownCounter;
+};
+
 Wallcounter.prototype.executeOnce = function () {
   "use strict";
   var th = this;
   th.bindUpdates();
-  events.on(th, 'Joined', function () {
-    th.ownCounter = new Wall(thisUser().username);
-    th.counter[th.key(th.ownCounter.username)] = th.ownCounter;
-  });
+  events.on(th, 'Joined', th.initOwnCounter);
 };
 
 Wallcounter.prototype.preConnect = function () {
