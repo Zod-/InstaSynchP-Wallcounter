@@ -122,9 +122,7 @@ Wallcounter.prototype.bindUpdates = function () {
     th.createIfNotExists(user.username);
   }
 
-  //LoadPlaylist happens before LoadUserlist so the walls would not have been
-  //created yet when recieving the AddVideo events
-  events.on(th, 'LoadPlaylist', function (videos) {
+  function onLoadPlaylist(videos) {
     videos.forEach(function (video) {
       onAddUser({
         username: video.addedby
@@ -132,7 +130,14 @@ Wallcounter.prototype.bindUpdates = function () {
       onAddVideo(video);
     });
     events.on(th, "AddVideo", onAddVideo, true);
-  });
+  }
+
+  //LoadPlaylist happens before LoadUserlist so the walls would not have been
+  //created yet when recieving the AddVideo events
+  events.on(th, 'LoadPlaylist', function () {
+    events.unbind("AddVideo", onAddVideo);
+  }, true);
+  events.on(th, 'LoadPlaylist', onLoadPlaylist);
 
   events.on(th, "AddUser", onAddUser);
 
