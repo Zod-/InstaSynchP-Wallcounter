@@ -154,11 +154,52 @@ Wallcounter.prototype.initOwnCounter = function () {
   th.counter[th.key(th.ownCounter.username)] = th.ownCounter;
 };
 
+Wallcounter.prototype.isAddVideoMessage = function (user, message) {
+  "use strict";
+  return (user.username === '' && message === 'Video added successfully.');
+};
+
+Wallcounter.prototype.getAddVideoMessage = function () {
+  "use strict";
+  var th = this;
+  return 'Video added successfully {0}'.format(th.ownCounter.format('[{1} - {2}]'));
+};
+
+Wallcounter.prototype.writeAddVideoMessage = function () {
+  "use strict";
+  addSystemMessage(this.getAddVideoMessage());
+};
+
+Wallcounter.prototype.hideLastMessage = function () {
+  "use strict";
+  $('#chat_messages >:last-child').hide();
+};
+
+Wallcounter.prototype.onAddVideoMessage = function () {
+  "use strict";
+  var th = this;
+  th.hideLastMessage();
+  th.writeAddVideoMessage();
+};
+
+Wallcounter.prototype.bindAddMessage = function () {
+  "use strict";
+  var th = this;
+  events.on(th, 'AddMessage', function (user, message) {
+    if (th.isAddVideoMessage(user, message)) {
+      th.onAddVideoMessage();
+    }
+  });
+};
+
 Wallcounter.prototype.executeOnce = function () {
   "use strict";
   var th = this;
   th.bindUpdates();
+
   events.on(th, 'Joined', th.initOwnCounter);
+
+  th.bindAddMessage();
 };
 
 Wallcounter.prototype.preConnect = function () {

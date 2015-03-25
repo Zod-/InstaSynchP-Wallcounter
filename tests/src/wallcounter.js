@@ -172,3 +172,43 @@ QUnit.test("Init own counter key test", function (assert) {
   wallcounter.initOwnCounter();
   assert.strictEqual(wallcounter.ownCounter, wallcounter.counter.abcde, 'To lower case key');
 });
+
+QUnit.test("IsAddVideoMessage", function (assert) {
+  "use strict";
+  assert.strictEqual(window.plugins.wallcounter.isAddVideoMessage({
+    username: 'abcde'
+  }, 'Video added successfully.'), false, 'is normal message');
+  assert.strictEqual(window.plugins.wallcounter.isAddVideoMessage({
+    username: ''
+  }, 'Video added successfully.'), true, 'is add video message');
+});
+
+QUnit.test("GetAddVideoMessage", function (assert) {
+  "use strict";
+  var wallcounter = new Wallcounter();
+  wallcounter.ownCounter = filledWallObject(1);
+
+  assert.strictEqual(wallcounter.getAddVideoMessage(), 'Video added successfully [00:10 - 1]', 'get message');
+});
+
+QUnit.test("WriteAddVideoMessage", function (assert) {
+  "use strict";
+  var wallcounter = new Wallcounter(),
+    message = '';
+  window.addSystemMessage = function (m) {
+    message = m;
+  };
+
+  wallcounter.ownCounter = filledWallObject(1);
+  wallcounter.writeAddVideoMessage({
+    username: ''
+  }, 'Video added successfully.');
+
+  assert.strictEqual(message, wallcounter.getAddVideoMessage(), 'Write message');
+});
+
+QUnit.test("HideLastMessage", function (assert) {
+  "use strict";
+  window.plugins.wallcounter.hideLastMessage();
+  assert.strictEqual($('#second_message').attr('style'), 'display: none; ', 'Hide last message');
+});
