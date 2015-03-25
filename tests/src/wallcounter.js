@@ -210,5 +210,6 @@ QUnit.test("WriteAddVideoMessage", function (assert) {
 QUnit.test("HideLastMessage", function (assert) {
   "use strict";
   window.plugins.wallcounter.hideLastMessage();
-  assert.strictEqual($('#second_message').attr('style'), 'display: none; ', 'Hide last message');
+  assert.strictEqual($('#first_message').attr('style'), undefined, 'First Message is not hidden');
+  assert.strictEqual($('#second_message').attr('style').trim(), 'display: none;', 'Last Message is hidden');
 });
