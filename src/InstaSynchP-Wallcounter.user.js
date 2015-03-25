@@ -3,7 +3,7 @@
 // @namespace   InstaSynchP
 // @description Summarizes the lengths of each users video walls
 
-// @version     1
+// @version     {{ VERSION }}
 // @author      Zod-
 // @source      https://github.com/Zod-/InstaSynchP-Wallcounter
 // @license     MIT
@@ -16,9 +16,9 @@
 // @require     https://greasyfork.org/scripts/5647-instasynchp-library/code/InstaSynchP%20Library.js?version=37716
 // ==/UserScript==
 
-function Wallcounter(version) {
+function Wallcounter() {
   "use strict";
-  this.version = version;
+  this.version = '{{ VERSION }}';
   this.name = 'InstaSynchP Wallcounter';
   this.counter = {};
   this.commands = {
@@ -95,7 +95,7 @@ Wallcounter.prototype.formatOutput = function (counts) {
     output += "{0}[<b>{2}</b> - {1}] - ".format(
       count.origName,
       count.count,
-      utils.secondsToTime(count.duration)
+      window.utils.secondsToTime(count.duration)
     );
     //2 counters per line
     if ((index + 1) % 2 === 0) {
@@ -144,4 +144,4 @@ Wallcounter.prototype.execute = function (opts) {
 };
 
 window.plugins = window.plugins || {};
-window.plugins.wallcounter = new Wallcounter('1');
+window.plugins.wallcounter = new Wallcounter();

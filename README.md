@@ -1,5 +1,4 @@
-# InstaSynchP-Wallcounter
-
+# InstaSynchP-Wallcounter [![Build Status](https://travis-ci.org/Zod-/InstaSynchP-Wallcounter.svg)](https://travis-ci.org/Zod-/InstaSynchP-Wallcounter)
 
 Name
 -----

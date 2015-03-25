@@ -1,0 +1,18 @@
+{
+  "globals": {
+    "jQuery": true,
+    "$": true,
+    "window": true,
+    "addSystemMessage": true,
+    "thisUser": true,
+    "events": true
+  },
+  "newcap":    false,
+  "boss":      true,
+  "node":      true,
+  "strict":    true,
+  "undef":     true,
+  "unused":    true,
+  "onecase":   true,
+  "lastsemic": true
+}
