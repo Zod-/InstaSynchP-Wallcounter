@@ -71,6 +71,7 @@ function Wallcounter() {
     'url': 'https://cdn.rawgit.com/Zod-/InstaSynchP-Wallcounter/{{ WALLCOUNTERCSSREV }}/dist/wallcounter.css',
     'autoload': true
   }];
+  this.Wall = Wall;
 }
 
 Wallcounter.prototype.resetVariables = function () {
@@ -104,7 +105,7 @@ Wallcounter.prototype.decrease = function (username, video) {
 
 Wallcounter.prototype.create = function (username) {
   "use strict";
-  this.walls[this.key(username)] = new Wall(username);
+  this.walls[this.key(username)] = new this.Wall(username);
 };
 
 Wallcounter.prototype.createIfNotExists = function (username) {
