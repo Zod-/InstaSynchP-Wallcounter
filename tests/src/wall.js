@@ -3,17 +3,17 @@ function defaultWallObject(username) {
   return new Wall(username || 'abcde');
 }
 
-function filledWallObject(count, username){
+function filledWallObject(count, username) {
   "use strict";
   var wall = defaultWallObject(username);
-  for(var i = 0; i < count; i++){
+  for (var i = 0; i < count; i++) {
     wall.add({
       duration: 10
     });
   }
   return wall;
 }
-QUnit.module( "Wall" );
+QUnit.module("Wall");
 QUnit.test("Create", function (assert) {
   "use strict";
   var username = 'abcde',
@@ -72,6 +72,16 @@ QUnit.test("Remove several", function (assert) {
 
 QUnit.test("Format", function (assert) {
   "use strict";
-  var wall = filledWallObject(2);
-  assert.strictEqual(wall.format('{0} {1} {2}'), 'abcde 00:20 2', 'abcde 00:20 2');
+  var wall = defaultWallObject();
+  assert.strictEqual(wall.format('{0}', '{1}', '{2}'), 'abcde[00:00 - 0]', 'Default format');
+});
+
+
+QUnit.test("Create format", function (assert) {
+  "use strict";
+  var wall = defaultWallObject();
+  assert.strictEqual(wall.createFormat('', '', ''), '[ - ]', 'Empty');
+  assert.strictEqual(wall.createFormat('{0}', '{1}', '{2}'), '{0}[{1} - {2}]', 'Basic');
+  assert.strictEqual(wall.createFormat('{0}', '{2}', '{1}'), '{0}[{2} - {1}]', 'Swapped');
+  assert.strictEqual(wall.createFormat('Wallcounter', '<b>{1}</b>', '{2}'), 'Wallcounter[<b>{1}</b> - {2}]', 'Advanced');
 });

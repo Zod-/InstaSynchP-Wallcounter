@@ -35,9 +35,16 @@ Wall.prototype.remove = function (video) {
   this.duration -= video.duration;
 };
 
-Wall.prototype.format = function (format) {
+Wall.prototype.createFormat = function (name, duration, videoCount) {
   "use strict";
-  var th = this;
+  return name + '[' + duration + ' - ' + videoCount + ']';
+};
+
+Wall.prototype.format = function (name, duration, videoCount) {
+  "use strict";
+  var th = this,
+    format = th.createFormat(name, duration, videoCount);
+
   return format.format(
     th.username,
     window.utils.secondsToTime(th.duration),
@@ -49,8 +56,8 @@ function Wallcounter() {
   "use strict";
   this.version = '{{ VERSION }}';
   this.name = 'InstaSynchP Wallcounter';
-  this.counter = {};
-  this.ownCounter = undefined;
+  this.walls = {};
+  this.userWall = undefined;
   this.commands = {
     "'wallcounter": {
       'hasArguments': true,
@@ -68,15 +75,15 @@ function Wallcounter() {
 
 Wallcounter.prototype.resetVariables = function () {
   "use strict";
-  this.ownCounter = undefined;
-  this.counter = {};
+  this.userWall = undefined;
+  this.walls = {};
 };
 
 Wallcounter.prototype.updateOwnDisplay = function () {
   "use strict";
   var th = this;
   $('#playlist_wallcounter').text(
-    th.ownCounter.format('Wallcounter[{1} - {2}]')
+    th.userWall.format('Wallcounter', '{1}', '{2}')
   );
 };
 
@@ -87,23 +94,23 @@ Wallcounter.prototype.key = function (key) {
 
 Wallcounter.prototype.increase = function (username, video) {
   "use strict";
-  this.counter[this.key(username)].add(video);
+  this.walls[this.key(username)].add(video);
 };
 
 Wallcounter.prototype.decrease = function (username, video) {
   "use strict";
-  this.counter[this.key(username)].remove(video);
+  this.walls[this.key(username)].remove(video);
 };
 
 Wallcounter.prototype.create = function (username) {
   "use strict";
-  this.counter[this.key(username)] = new Wall(username);
+  this.walls[this.key(username)] = new Wall(username);
 };
 
 Wallcounter.prototype.createIfNotExists = function (username) {
   "use strict";
   var th = this;
-  if (th.counter.hasOwnProperty(th.key(username))) {
+  if (th.walls.hasOwnProperty(th.key(username))) {
     return;
   }
   th.create(username);
@@ -147,11 +154,11 @@ Wallcounter.prototype.bindUpdates = function () {
   }, true);
 };
 
-Wallcounter.prototype.initOwnCounter = function () {
+Wallcounter.prototype.initUserWall = function () {
   "use strict";
   var th = this;
-  th.ownCounter = new Wall(thisUser().username);
-  th.counter[th.key(th.ownCounter.username)] = th.ownCounter;
+  th.userWall = new Wall(thisUser().username);
+  th.walls[th.key(th.userWall.username)] = th.userWall;
 };
 
 Wallcounter.prototype.isAddVideoMessage = function (user, message) {
@@ -162,7 +169,7 @@ Wallcounter.prototype.isAddVideoMessage = function (user, message) {
 Wallcounter.prototype.getAddVideoMessage = function () {
   "use strict";
   var th = this;
-  return 'Video added successfully {0}'.format(th.ownCounter.format('[{1} - {2}]'));
+  return 'Video added successfully {0}'.format(th.userWall.format('', '{1}', '{2}'));
 };
 
 Wallcounter.prototype.writeAddVideoMessage = function () {
@@ -175,19 +182,13 @@ Wallcounter.prototype.hideLastMessage = function () {
   $('#chat_messages >:last-child').hide();
 };
 
-Wallcounter.prototype.onAddVideoMessage = function () {
-  "use strict";
-  var th = this;
-  th.hideLastMessage();
-  th.writeAddVideoMessage();
-};
-
 Wallcounter.prototype.bindAddMessage = function () {
   "use strict";
   var th = this;
   events.on(th, 'AddMessage', function (user, message) {
     if (th.isAddVideoMessage(user, message)) {
-      th.onAddVideoMessage();
+      th.hideLastMessage();
+      th.writeAddVideoMessage();
     }
   });
 };
@@ -197,7 +198,7 @@ Wallcounter.prototype.executeOnce = function () {
   var th = this;
   th.bindUpdates();
 
-  events.on(th, 'Joined', th.initOwnCounter);
+  events.on(th, 'Joined', th.initUserWall);
 
   th.bindAddMessage();
 };
@@ -212,23 +213,27 @@ Wallcounter.prototype.preConnect = function () {
   );
 };
 
-Wallcounter.prototype.formatOutput = function (counts) {
+Wallcounter.prototype.postfixForIndex = function (index, max) {
   "use strict";
-  //REFACTOR
-  var output = "Wallcounter<br>";
-  counts.forEach(function (count, index) {
-    output += count.format('{0}[<b>{1}</b> - {2}] - ');
-    //2 counters per line
-    if ((index + 1) % 2 === 0) {
-      //remove " - "
-      output = output.substring(0, output.length - 3);
-      output += '<br>';
-    }
-  });
-  //remove " - "
-  if (counts.length % 2 === 1) {
-    output = output.substring(0, output.length - 3);
+  if (index === max - 1) {
+    return '';
+  } else if (index % 2 === 1) {
+    return '<br>';
+  } else {
+    return ' - ';
   }
+};
+
+Wallcounter.prototype.formatOutput = function (walls) {
+  "use strict";
+  var th = this,
+    output = "Wallcounter<br>";
+
+  walls.forEach(function (wall, index) {
+    output += wall.format('{0}', '<b>{1}</b>', '{2}');
+    output += th.postfixForIndex(index, walls.length);
+  });
+
   return output;
 };
 
@@ -237,9 +242,9 @@ Wallcounter.prototype.getWallsForUsernames = function (usernames) {
   var th = this,
     walls = [];
   usernames.forEach(function (username) {
-    if (th.counter.hasOwnProperty(th.key(username)) &&
-      th.counter[th.key(username)].videoCount !== 0) {
-      walls.push(th.counter[th.key(username)]);
+    if (th.walls.hasOwnProperty(th.key(username)) &&
+      th.walls[th.key(username)].videoCount !== 0) {
+      walls.push(th.walls[th.key(username)]);
     }
   });
   return walls;
@@ -253,7 +258,7 @@ Wallcounter.prototype.execute = function (opts) {
   if (opts.usernames.length !== 0) {
     walls = th.getWallsForUsernames(opts.usernames);
   } else {
-    walls = th.getWallsForUsernames(Object.keys(th.counter));
+    walls = th.getWallsForUsernames(Object.keys(th.walls));
   }
 
   walls.sort(function (c1, c2) {

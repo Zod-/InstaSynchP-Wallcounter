@@ -14,13 +14,13 @@ QUnit.test("Plugin set", function (assert) {
 QUnit.test("ResetVariables", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
-  wallcounter.ownCounter = {};
-  wallcounter.counter = {
+  wallcounter.userWall = {};
+  wallcounter.walls = {
     foo: 'bar'
   };
   wallcounter.resetVariables();
-  assert.strictEqual(wallcounter.ownCounter, undefined, 'ownCounter reset');
-  assert.strictEqual(wallcounter.counter.foo, undefined, 'counter reset');
+  assert.strictEqual(wallcounter.userWall, undefined, 'userWall reset');
+  assert.strictEqual(wallcounter.walls.foo, undefined, 'counter reset');
 });
 
 QUnit.test("Key", function (assert) {
@@ -31,67 +31,67 @@ QUnit.test("Key", function (assert) {
 QUnit.test("Increase", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
-  wallcounter.counter = {
+  wallcounter.walls = {
     'abcde': defaultWallObject()
   };
   wallcounter.increase('abcde', {
     duration: 10
   });
-  assert.strictEqual(wallcounter.counter.abcde.duration, 10, 'Duration incrased');
-  assert.strictEqual(wallcounter.counter.abcde.videoCount, 1, 'VideoCount incrased');
+  assert.strictEqual(wallcounter.walls.abcde.duration, 10, 'Duration incrased');
+  assert.strictEqual(wallcounter.walls.abcde.videoCount, 1, 'VideoCount incrased');
 });
 
 QUnit.test("Increase key test", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
-  wallcounter.counter = {
+  wallcounter.walls = {
     'abcde': defaultWallObject()
   };
   wallcounter.increase('ABCDE', {
     duration: 10
   });
-  assert.strictEqual(wallcounter.counter.abcde.duration, 10, 'Duration incrased');
-  assert.strictEqual(wallcounter.counter.abcde.videoCount, 1, 'VideoCount incrased');
+  assert.strictEqual(wallcounter.walls.abcde.duration, 10, 'Duration incrased');
+  assert.strictEqual(wallcounter.walls.abcde.videoCount, 1, 'VideoCount incrased');
 });
 
 QUnit.test("Decrease", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
-  wallcounter.counter = {
+  wallcounter.walls = {
     'abcde': filledWallObject(1)
   };
   wallcounter.decrease('abcde', {
     duration: 10
   });
-  assert.strictEqual(wallcounter.counter.abcde.duration, 0, 'Duration decreased');
-  assert.strictEqual(wallcounter.counter.abcde.videoCount, 0, 'VideoCount decreased');
+  assert.strictEqual(wallcounter.walls.abcde.duration, 0, 'Duration decreased');
+  assert.strictEqual(wallcounter.walls.abcde.videoCount, 0, 'VideoCount decreased');
 });
 
 QUnit.test("Decrease key test", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
-  wallcounter.counter = {
+  wallcounter.walls = {
     'abcde': filledWallObject(1)
   };
   wallcounter.decrease('ABCDE', {
     duration: 10
   });
-  assert.strictEqual(wallcounter.counter.abcde.duration, 0, 'Duration decreased');
-  assert.strictEqual(wallcounter.counter.abcde.videoCount, 0, 'VideoCount decreased');
+  assert.strictEqual(wallcounter.walls.abcde.duration, 0, 'Duration decreased');
+  assert.strictEqual(wallcounter.walls.abcde.videoCount, 0, 'VideoCount decreased');
 });
 
 QUnit.test("Create", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
   wallcounter.create('abcde');
-  assert.strictEqual(wallcounter.counter.abcde instanceof Wall, true, 'New Wall created');
+  assert.strictEqual(wallcounter.walls.abcde instanceof Wall, true, 'New Wall created');
 });
 
 QUnit.test("Create key test", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
   wallcounter.create('ABCDE');
-  assert.strictEqual(wallcounter.counter.abcde instanceof Wall, true, 'New Wall created');
+  assert.strictEqual(wallcounter.walls.abcde instanceof Wall, true, 'New Wall created');
 });
 
 QUnit.test("CreateIfNotExists", function (assert) {
@@ -99,7 +99,7 @@ QUnit.test("CreateIfNotExists", function (assert) {
   var wallcounter = new Wallcounter();
   wallcounter.createIfNotExists('abcde');
   wallcounter.createIfNotExists('ABCDE');
-  assert.strictEqual(wallcounter.counter.abcde.username, 'abcde', 'Wall not overwritten');
+  assert.strictEqual(wallcounter.walls.abcde.username, 'abcde', 'Wall not overwritten');
 });
 
 QUnit.test("CreateIfNotExists key test", function (assert) {
@@ -107,7 +107,7 @@ QUnit.test("CreateIfNotExists key test", function (assert) {
   var wallcounter = new Wallcounter();
   wallcounter.createIfNotExists('ABCDE');
   wallcounter.createIfNotExists('abcde');
-  assert.strictEqual(wallcounter.counter.abcde.username, 'ABCDE', 'Wall not overwritten');
+  assert.strictEqual(wallcounter.walls.abcde.username, 'ABCDE', 'Wall not overwritten');
 });
 
 QUnit.test("Create display", function (assert) {
@@ -120,7 +120,7 @@ QUnit.test("Update display", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
 
-  wallcounter.ownCounter = filledWallObject(1);
+  wallcounter.userWall = filledWallObject(1);
   wallcounter.updateOwnDisplay();
   assert.strictEqual($('#playlist_wallcounter').text(), 'Wallcounter[00:10 - 1]', 'Div updated');
 });
@@ -128,7 +128,7 @@ QUnit.test("Update display", function (assert) {
 QUnit.test("GetWallsForUsernames", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
-  wallcounter.counter = {
+  wallcounter.walls = {
     'foo': filledWallObject(1, 'foo'),
     'bar': filledWallObject(1, 'bar'),
     'baz': filledWallObject(1, 'baz')
@@ -142,7 +142,7 @@ QUnit.test("GetWallsForUsernames", function (assert) {
 QUnit.test("GetWallsForUsernames key test", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
-  wallcounter.counter = {
+  wallcounter.walls = {
     'foo': filledWallObject(1, 'foo')
   };
   var walls = wallcounter.getWallsForUsernames(['FOO']);
@@ -157,8 +157,8 @@ QUnit.test("Init own counter", function (assert) {
       username: 'abcde'
     };
   };
-  wallcounter.initOwnCounter();
-  assert.strictEqual(wallcounter.ownCounter, wallcounter.counter.abcde, 'OwnCounter is in the counter object');
+  wallcounter.initUserWall();
+  assert.strictEqual(wallcounter.userWall, wallcounter.walls.abcde, 'OwnCounter is in the counter object');
 });
 
 QUnit.test("Init own counter key test", function (assert) {
@@ -169,8 +169,8 @@ QUnit.test("Init own counter key test", function (assert) {
       username: 'ABCDE'
     };
   };
-  wallcounter.initOwnCounter();
-  assert.strictEqual(wallcounter.ownCounter, wallcounter.counter.abcde, 'To lower case key');
+  wallcounter.initUserWall();
+  assert.strictEqual(wallcounter.userWall, wallcounter.walls.abcde, 'To lower case key');
 });
 
 QUnit.test("IsAddVideoMessage", function (assert) {
@@ -186,7 +186,7 @@ QUnit.test("IsAddVideoMessage", function (assert) {
 QUnit.test("GetAddVideoMessage", function (assert) {
   "use strict";
   var wallcounter = new Wallcounter();
-  wallcounter.ownCounter = filledWallObject(1);
+  wallcounter.userWall = filledWallObject(1);
 
   assert.strictEqual(wallcounter.getAddVideoMessage(), 'Video added successfully [00:10 - 1]', 'get message');
 });
@@ -199,7 +199,7 @@ QUnit.test("WriteAddVideoMessage", function (assert) {
     message = m;
   };
 
-  wallcounter.ownCounter = filledWallObject(1);
+  wallcounter.userWall = filledWallObject(1);
   wallcounter.writeAddVideoMessage({
     username: ''
   }, 'Video added successfully.');
@@ -212,4 +212,26 @@ QUnit.test("HideLastMessage", function (assert) {
   window.plugins.wallcounter.hideLastMessage();
   assert.strictEqual($('#first_message').attr('style'), undefined, 'First Message is not hidden');
   assert.strictEqual($('#second_message').attr('style').trim(), 'display: none;', 'Last Message is hidden');
+});
+
+QUnit.test("Format output", function (assert) {
+  "use strict";
+  var walls = [];
+  assert.strictEqual(window.plugins.wallcounter.formatOutput(walls), 'Wallcounter<br>', 'Empty array');
+
+  walls.push(filledWallObject(1, 'foo'));
+  assert.strictEqual(window.plugins.wallcounter.formatOutput(walls), 'Wallcounter<br>foo[<b>00:10</b> - 1]', '1 parameter');
+
+  walls.push(filledWallObject(2, 'bar'));
+  assert.strictEqual(window.plugins.wallcounter.formatOutput(walls), 'Wallcounter<br>foo[<b>00:10</b> - 1] - bar[<b>00:20</b> - 2]', '2 parameters');
+
+  walls.push(filledWallObject(3, 'baz'));
+  assert.strictEqual(window.plugins.wallcounter.formatOutput(walls), 'Wallcounter<br>foo[<b>00:10</b> - 1] - bar[<b>00:20</b> - 2]<br>baz[<b>00:30</b> - 3]', '3 parameters');
+});
+
+QUnit.test("Postfix for index", function (assert) {
+  "use strict";
+  assert.strictEqual(window.plugins.wallcounter.postfixForIndex(9, 10), '', 'Last element');
+  assert.strictEqual(window.plugins.wallcounter.postfixForIndex(0, 10), ' - ', 'Even element');
+  assert.strictEqual(window.plugins.wallcounter.postfixForIndex(1, 10), '<br>', 'Odd element');
 });
