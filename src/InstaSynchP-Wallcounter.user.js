@@ -83,7 +83,7 @@ Wallcounter.prototype.resetVariables = function () {
 Wallcounter.prototype.updateOwnDisplay = function () {
   "use strict";
   var th = this;
-  $('#playlist_wallcounter').text(
+  $('#playlist_wallcounter').empty().append(
     th.userWall.format('Wallcounter', '{1}', '{2}')
   );
 };
