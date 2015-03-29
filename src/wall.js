@@ -1,35 +1,35 @@
 function Wall(username) {
-  "use strict";
+  'use strict';
   this.duration = 0;
   this.videoCount = 0;
   this.username = username;
 }
 
 Wall.prototype.add = function (video) {
-  "use strict";
+  'use strict';
   this.videoCount++;
   this.duration += video.duration;
 };
 
 Wall.prototype.remove = function (video) {
-  "use strict";
+  'use strict';
   this.videoCount--;
   this.duration -= video.duration;
 };
 
 Wall.prototype.createFormat = function (name, duration, videoCount) {
-  "use strict";
+  'use strict';
   return name + '[' + duration + ' - ' + videoCount + ']';
 };
 
 Wall.prototype.format = function (name, duration, videoCount) {
-  "use strict";
-  var th = this,
-  format = th.createFormat(name, duration, videoCount);
+  'use strict';
+  var _this = this;
+  var format = _this.createFormat(name, duration, videoCount);
 
   return format.format(
-    th.username,
-    window.utils.secondsToTime(th.duration),
-    th.videoCount
+    _this.username,
+    window.utils.secondsToTime(_this.duration),
+    _this.videoCount
   );
 };

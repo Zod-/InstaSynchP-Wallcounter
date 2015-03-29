@@ -1,10 +1,10 @@
 module.exports = function (grunt) {
-  "use strict";
+  'use strict';
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     'string-replace': {
-      replace: {
+      build: {
         files: {
           'dist/': 'dist/*.js',
         },
@@ -22,6 +22,17 @@ module.exports = function (grunt) {
             }
           }]
         }
+      },
+      jshint: {
+        files: {
+          'dist/': 'dist/*.js',
+        },
+        options: {
+          replacements: [{
+            pattern: /\/\*\s*jshint[^\n]*\n/g,
+            replacement: ''
+          }]
+        }
       }
     },
     copy: {
@@ -36,7 +47,7 @@ module.exports = function (grunt) {
       options: {
         jshintrc: '.jshintrc',
       },
-      beforereplace: ['src/InstaSynchP-Wallcounter.user.js'],
+      beforereplace: ['src/wall.js', 'src/wallcounter.js'],
       afterreplace: ['dist/InstaSynchP-Wallcounter.user.js'],
       beforeconcat: ['tests/src/*.js'],
       afterconcat: ['tests/test.js'],
@@ -75,11 +86,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-string-replace');
   grunt.loadNpmTasks('grunt-shell');
 
-  grunt.registerTask('default', ['copy', 'shell', 'concat', 'string-replace',
-    'jshint', 'qunit'
+  grunt.registerTask('default', ['copy', 'shell', 'concat',
+    'string-replace:build', 'jshint', 'string-replace:jshint',
+    'qunit'
   ]);
   grunt.registerTask('test', ['concat', 'jshint', 'qunit']);
   grunt.registerTask('build-css', ['copy']);
   grunt.registerTask('build-js', ['shell', 'concat', 'string-replace']);
-  grunt.registerTask('build', ['copy', 'shell', 'concat', 'string-replace']);
+  grunt.registerTask('build', ['build-css', 'build-js']);
 };
