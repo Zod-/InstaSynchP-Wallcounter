@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "description": "Summarizes the lengths of each users (or a list of users) walls",
   "main": "Gruntfile.js",
+  "homepage": "https://github.com/Zod-/InstaSynchP-Wallcounter",
   "repository": {
     "type": "git",
     "url": "https://github.com/Zod-/InstaSynchP-Wallcounter.git"
@@ -22,14 +23,27 @@
   },
   "devDependencies": {
     "grunt": "~0.4.5",
+    "grunt-contrib-concat": "~0.5.1",
     "grunt-contrib-copy": "~0.8.0",
     "grunt-contrib-jshint": "~0.11.1",
-    "grunt-string-replace": "~1.0.0",
+    "grunt-contrib-qunit": "~0.5.2",
     "grunt-shell": "~1.1.2",
-    "grunt-contrib-concat": "~0.5.1",
-    "grunt-contrib-qunit": "~0.5.2"
+    "grunt-string-replace": "~1.0.0",
+    "grunt-userscript-meta": "^0.1.1"
   },
   "scripts": {
     "test": "grunt --verbose"
+  },
+  "userscript": {
+    "namespace": "InstaSynchP",
+    "author": {
+      "name": "Zod-"
+    },
+    "other": {
+      "include": ["*://instasync.com/r/*", "*://*.instasync.com/r/*"],
+      "grant": "none",
+      "run-at": "document-start",
+      "require": "https://greasyfork.org/scripts/5647-instasynchp-library/code/code.js?version=37716"
+    }
   }
 }

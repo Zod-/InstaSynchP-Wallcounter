@@ -10,27 +10,24 @@ module.exports = function (grunt) {
         },
         options: {
           replacements: [{
-            pattern: /{{ VERSION }}/g,
+            pattern: /@VERSION@/g,
             replacement: '<%= pkg.version %>'
           }, {
-            pattern: /{{ WALLCOUNTERCSSREV }}/g,
+            pattern: /@WALLCOUNTERCSSREV@/g,
             replacement: function () {
               var cssrev = grunt.file.read('dist/wallcounterCSSrev')
                 .trim();
               grunt.file.delete('dist/wallcounterCSSrev');
               return cssrev;
             }
-          }]
-        }
-      },
-      jshint: {
-        files: {
-          'dist/': 'dist/*.js',
-        },
-        options: {
-          replacements: [{
-            pattern: /\/\*\s*jshint[^\n]*\n/g,
-            replacement: ''
+          }, {
+            pattern: /@RAWGITREPO@/g,
+            replacement: 'https://cdn.rawgit.com/Zod-/InstaSynchP-Wallcounter'
+          }, {
+            pattern: /\/\/ @name[^\n]*\n/g,
+            replacement: function(match){
+              return match.replace(/-/,' ');
+            }
           }]
         }
       }
@@ -48,7 +45,6 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc',
       },
       beforereplace: ['src/wall.js', 'src/wallcounter.js'],
-      afterreplace: ['dist/InstaSynchP-Wallcounter.user.js'],
       beforeconcat: ['tests/src/*.js'],
       afterconcat: ['tests/test.js'],
       other: ['Gruntfile.js']
@@ -76,6 +72,11 @@ module.exports = function (grunt) {
     },
     qunit: {
       all: ['tests/index.html']
+    },
+    'userscript-meta': {
+      build: {
+        dest: 'src/meta.js'
+      }
     }
   });
 
@@ -85,13 +86,15 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-string-replace');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-userscript-meta');
 
-  grunt.registerTask('default', ['copy', 'shell', 'concat',
-    'string-replace:build', 'jshint', 'string-replace:jshint',
-    'qunit'
+  grunt.registerTask('default', ['copy', 'shell', 'userscript-meta', 'concat',
+    'string-replace', 'jshint', 'qunit'
   ]);
   grunt.registerTask('test', ['concat', 'jshint', 'qunit']);
   grunt.registerTask('build-css', ['copy']);
-  grunt.registerTask('build-js', ['shell', 'concat', 'string-replace']);
+  grunt.registerTask('build-js', ['shell', 'userscript-meta',
+    'concat', 'string-replace'
+  ]);
   grunt.registerTask('build', ['build-css', 'build-js']);
 };

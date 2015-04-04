@@ -1,6 +1,6 @@
 function Wallcounter() {
   'use strict';
-  this.version = '{{ VERSION }}';
+  this.version = '@VERSION@';
   this.name = 'InstaSynchP Wallcounter';
   this.walls = {};
   this.userWall = undefined;
@@ -9,14 +9,13 @@ function Wallcounter() {
       hasArguments: true,
       reference: this,
       description: 'Summarizes the lengths of each users video walls or\
-       specific users',
+specific users',
       callback: this.execute
     }
   };
   this.styles = [{
     name: 'wallcounter',
-    url: 'https://cdn.rawgit.com/Zod-/InstaSynchP-Wallcounter/\
-    {{ WALLCOUNTERCSSREV }}/dist/wallcounter.css',
+    url: '@RAWGITREPO@/@WALLCOUNTERCSSREV@/dist/wallcounter.css',
     autoload: true
   }];
   this.Wall = Wall;
