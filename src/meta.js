@@ -2,7 +2,7 @@
 // @name         InstaSynchP-Wallcounter
 // @namespace    InstaSynchP
 // @description  Summarizes the lengths of each users (or a list of users) walls
-// @version      1.0.3
+// @version      1.0.4
 // @author       Zod-
 // @source       https://github.com/Zod-/InstaSynchP-Wallcounter
 // @license      MIT
