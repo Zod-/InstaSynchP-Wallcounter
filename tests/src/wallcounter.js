@@ -142,7 +142,7 @@ QUnit.test('Update display', function (assert) {
     'Wallcounter[00:10 - 1]', 'Div updated');
 });
 
-QUnit.test('GetWallsForUsernames aray', function (assert) {
+QUnit.test('GetWallsForUsernames array', function (assert) {
   'use strict';
   var wallcounter = new Wallcounter();
   wallcounter.walls = {
