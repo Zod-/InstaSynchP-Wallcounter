@@ -142,7 +142,7 @@ QUnit.test('Update display', function (assert) {
     'Wallcounter[00:10 - 1]', 'Div updated');
 });
 
-QUnit.test('GetWallsForUsernames', function (assert) {
+QUnit.test('GetWallsForUsernames aray', function (assert) {
   'use strict';
   var wallcounter = new Wallcounter();
   wallcounter.walls = {
@@ -154,6 +154,32 @@ QUnit.test('GetWallsForUsernames', function (assert) {
   assert.strictEqual(walls.length, 2, 'Two element returned');
   assert.strictEqual(walls[0].username, 'foo', 'First element equal');
   assert.strictEqual(walls[1].username, 'baz', 'Second element equal');
+});
+
+QUnit.test('GetWallsForUsernames single', function (assert) {
+  'use strict';
+  var wallcounter = new Wallcounter();
+  wallcounter.walls = {
+    'foo': filledWallObject(1, 'foo'),
+    'bar': filledWallObject(1, 'bar'),
+    'baz': filledWallObject(1, 'baz')
+  };
+  var walls = wallcounter.getWallsForUsernames('bar');
+  assert.strictEqual(walls.length, 1, 'One element returned');
+  assert.strictEqual(walls[0].username, 'bar', 'First element equal');
+});
+
+QUnit.test('GetNonEmptyWalls', function (assert) {
+  'use strict';
+  var wallcounter = new Wallcounter();
+  wallcounter.walls = {
+    'foo': filledWallObject(1, 'foo'),
+    'bar': defaultWallObject('bar'),
+    'baz': filledWallObject(1, 'baz')
+  };
+  var walls = wallcounter.getNonEmptyWalls(['foo', 'bar']);
+  assert.strictEqual(walls.length, 1, 'One element returned');
+  assert.strictEqual(walls[0].username, 'foo', 'First element equal');
 });
 
 QUnit.test('GetWallsForUsernames key test', function (assert) {

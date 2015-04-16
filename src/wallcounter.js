@@ -191,12 +191,31 @@ Wallcounter.prototype.getWallsForUsernames = function (usernames) {
   'use strict';
   var _this = this;
   var walls = [];
+
+  if (!Array.isArray(usernames)) {
+    usernames = [usernames];
+  }
+
   usernames.forEach(function (username) {
-    if (_this.walls.hasOwnProperty(_this.key(username)) &&
-      _this.walls[_this.key(username)].videoCount !== 0) {
+    if (_this.walls.hasOwnProperty(_this.key(username))) {
       walls.push(_this.walls[_this.key(username)]);
     }
   });
+
+  return walls;
+};
+
+Wallcounter.prototype.getNonEmptyWalls = function (usernames) {
+  'use strict';
+  var _this = this;
+  var walls = [];
+
+  _this.getWallsForUsernames(usernames).forEach(function (wall) {
+    if (wall.videoCount !== 0) {
+      walls.push(wall);
+    }
+  });
+
   return walls;
 };
 
@@ -206,9 +225,9 @@ Wallcounter.prototype.execute = function (opts) {
   var walls = [];
 
   if (opts.usernames.length !== 0) {
-    walls = _this.getWallsForUsernames(opts.usernames);
+    walls = _this.getNonEmptyWalls(opts.usernames);
   } else {
-    walls = _this.getWallsForUsernames(Object.keys(_this.walls));
+    walls = _this.getNonEmptyWalls(Object.keys(_this.walls));
   }
 
   walls.sort(function (c1, c2) {
