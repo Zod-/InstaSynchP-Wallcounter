@@ -6,9 +6,9 @@
 // @author       Zod-
 // @source       https://github.com/Zod-/InstaSynchP-Wallcounter
 // @license      MIT
+// @require      https://greasyfork.org/scripts/5647-instasynchp-library/code/code.js?version=37716
 // @include      *://instasync.com/r/*
 // @include      *://*.instasync.com/r/*
 // @grant        none
 // @run-at       document-start
-// @require      https://greasyfork.org/scripts/5647-instasynchp-library/code/code.js?version=37716
 // ==/UserScript==

@@ -29,7 +29,7 @@
     "grunt-contrib-qunit": "~0.5.2",
     "grunt-shell": "~1.1.2",
     "grunt-string-replace": "~1.0.0",
-    "grunt-userscript-meta": "^0.1.1"
+    "grunt-userscript-meta": "^0.1.2"
   },
   "scripts": {
     "test": "grunt --verbose"
@@ -39,11 +39,16 @@
     "author": {
       "name": "Zod-"
     },
+    "require": {
+      "greasyfork": {
+        "id": "5647-instasynchp-library",
+        "version": "37716"
+      }
+    },
     "other": {
       "include": ["*://instasync.com/r/*", "*://*.instasync.com/r/*"],
       "grant": "none",
-      "run-at": "document-start",
-      "require": "https://greasyfork.org/scripts/5647-instasynchp-library/code/code.js?version=37716"
+      "run-at": "document-start"
     }
   }
 }
