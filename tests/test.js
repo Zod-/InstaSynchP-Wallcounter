@@ -44,6 +44,18 @@ window.utils = {
   }
 };
 
+window.gmc = {
+  get: function (ignore, def) {
+    'use strict';
+    return def;
+  }
+};
+
+window.isUdef = function (obj) {
+  'use strict';
+  return typeof obj === 'undefined';
+};
+
 function defaultWallObject(username) {
   'use strict';
   return new Wall(username || 'abcde');
@@ -280,7 +292,7 @@ QUnit.test('Update display', function (assert) {
     'Wallcounter[00:10 - 1]', 'Div updated');
 });
 
-QUnit.test('GetWallsForUsernames aray', function (assert) {
+QUnit.test('GetWallsForUsernames array', function (assert) {
   'use strict';
   var wallcounter = new Wallcounter();
   wallcounter.walls = {
@@ -294,7 +306,7 @@ QUnit.test('GetWallsForUsernames aray', function (assert) {
   assert.strictEqual(walls[1].username, 'baz', 'Second element equal');
 });
 
-QUnit.test('GetWallsForUsernames single', function (assert) {
+QUnit.test('GetWallForUsername', function (assert) {
   'use strict';
   var wallcounter = new Wallcounter();
   wallcounter.walls = {
@@ -302,9 +314,8 @@ QUnit.test('GetWallsForUsernames single', function (assert) {
     'bar': filledWallObject(1, 'bar'),
     'baz': filledWallObject(1, 'baz')
   };
-  var walls = wallcounter.getWallsForUsernames('bar');
-  assert.strictEqual(walls.length, 1, 'One element returned');
-  assert.strictEqual(walls[0].username, 'bar', 'First element equal');
+  var wall = wallcounter.getWallForUsername('bar');
+  assert.strictEqual(wall.username, 'bar', 'Right element returned');
 });
 
 QUnit.test('GetNonEmptyWalls', function (assert) {
