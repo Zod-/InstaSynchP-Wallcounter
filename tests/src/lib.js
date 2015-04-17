@@ -43,3 +43,15 @@ window.utils = {
     return time;
   }
 };
+
+window.gmc = {
+  get: function (ignore, def) {
+    'use strict';
+    return def;
+  }
+};
+
+window.isUdef = function (obj) {
+  'use strict';
+  return typeof obj === 'undefined';
+};

@@ -9,7 +9,7 @@ function Wallcounter() {
       hasArguments: true,
       reference: this,
       description: 'Summarizes the lengths of each users video walls or\
-specific users',
+      specific users ',
       callback: this.execute
     }
   };
@@ -124,7 +124,9 @@ Wallcounter.prototype.getAddVideoMessage = function () {
 
 Wallcounter.prototype.writeAddVideoMessage = function () {
   'use strict';
-  addSystemMessage(this.getAddVideoMessage());
+  if (!gmc.get('add-video-log', false)) {
+    addSystemMessage(this.getAddVideoMessage());
+  }
 };
 
 Wallcounter.prototype.hideLastMessage = function () {
@@ -143,6 +145,22 @@ Wallcounter.prototype.bindAddMessage = function () {
   });
 };
 
+Wallcounter.prototype.extendUserSpy = function () {
+  'use strict';
+  var _this = this;
+  var userSpy = window.plugins.userSpy;
+  if (isUdef(userSpy)) {
+    return;
+  }
+
+  var oldGetAddVideoMessage = userSpy.getAddVideoMessage;
+
+  userSpy.getAddVideoMessage = function getAddVideoMessage(video) {
+    return oldGetAddVideoMessage.apply(userSpy, arguments) + ' ' +
+      _this.getWallForUsername(video.addedby).format('', '{1}', '{2}');
+  };
+};
+
 Wallcounter.prototype.executeOnce = function () {
   'use strict';
   var _this = this;
@@ -151,6 +169,8 @@ Wallcounter.prototype.executeOnce = function () {
   events.on(_this, 'Joined', _this.initUserWall);
 
   _this.bindAddMessage();
+
+  _this.extendUserSpy();
 };
 
 Wallcounter.prototype.preConnect = function () {
@@ -187,18 +207,24 @@ Wallcounter.prototype.formatOutput = function (walls) {
   return output;
 };
 
+Wallcounter.prototype.getWallForUsername = function (username) {
+  'use strict';
+  var _this = this;
+  if (_this.walls.hasOwnProperty(_this.key(username))) {
+    return _this.walls[_this.key(username)];
+  }
+  return undefined;
+};
+
 Wallcounter.prototype.getWallsForUsernames = function (usernames) {
   'use strict';
   var _this = this;
   var walls = [];
 
-  if (!Array.isArray(usernames)) {
-    usernames = [usernames];
-  }
-
   usernames.forEach(function (username) {
-    if (_this.walls.hasOwnProperty(_this.key(username))) {
-      walls.push(_this.walls[_this.key(username)]);
+    var wall = _this.getWallForUsername(username);
+    if (!isUdef(wall)) {
+      walls.push(wall);
     }
   });
 

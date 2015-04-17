@@ -6,7 +6,9 @@
     "Wall":              true,
     "Wallcounter":       true,
     "defaultWallObject": true,
-    "filledWallObject":  true
+    "filledWallObject":  true,
+    "isUdef":            true,
+    "gmc":               true
   },
   "qunit":       true,
   "jquery":      true,
