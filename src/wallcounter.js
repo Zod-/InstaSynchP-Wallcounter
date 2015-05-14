@@ -96,7 +96,7 @@ Wallcounter.prototype.bindUpdates = function () {
 
   events.on(_this, 'AddUser', onAddUser);
 
-  events.on(_this, 'RemoveVideo', function (ignore, video) {
+  events.on(_this, 'RemoveVideo', function (video) {
     _this.decrease(video.addedby, video);
     _this.updateOwnDisplay();
   }, true);
