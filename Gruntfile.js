@@ -66,7 +66,7 @@ module.exports = function (grunt) {
         dest: 'tests/test.js',
       },
       dist: {
-        src: ['src/meta.js', 'src/wall.js', 'src/wallcounter.js'],
+        src: ['tmp/meta.js', 'src/wall.js', 'src/wallcounter.js'],
         dest: 'dist/InstaSynchP-Wallcounter.user.js'
       }
     },
@@ -75,7 +75,7 @@ module.exports = function (grunt) {
     },
     'userscript-meta': {
       build: {
-        dest: 'src/meta.js'
+        dest: 'tmp/meta.js'
       }
     }
   });
