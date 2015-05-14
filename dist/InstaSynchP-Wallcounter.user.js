@@ -2,7 +2,7 @@
 // @name         InstaSynchP Wallcounter
 // @namespace    InstaSynchP
 // @description  Summarizes the lengths of each users (or a list of users) walls
-// @version      1.0.5
+// @version      1.0.6
 // @author       Zod-
 // @source       https://github.com/Zod-/InstaSynchP-Wallcounter
 // @license      MIT
@@ -51,7 +51,7 @@ Wall.prototype.format = function (name, duration, videoCount) {
 
 function Wallcounter() {
   'use strict';
-  this.version = '1.0.5';
+  this.version = '1.0.6';
   this.name = 'InstaSynchP Wallcounter';
   this.walls = {};
   this.userWall = undefined;
@@ -147,7 +147,7 @@ Wallcounter.prototype.bindUpdates = function () {
 
   events.on(_this, 'AddUser', onAddUser);
 
-  events.on(_this, 'RemoveVideo', function (ignore, video) {
+  events.on(_this, 'RemoveVideo', function (video) {
     _this.decrease(video.addedby, video);
     _this.updateOwnDisplay();
   }, true);
